@@ -3,8 +3,8 @@ plugins {
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
     id 'com.google.gms.google-services'
-//  id "org.jetbrains.kotlin.jvm" version "1.9.10"
-//  id 'org.jetbrains.kotlin.multiplatform' version '1.9.10'
+//    id "org.jetbrains.kotlin.jvm" version "1.9.10"
+//    id 'org.jetbrains.kotlin.multiplatform' version '1.9.10'
 }
 
 def localProperties = new Properties()
@@ -50,7 +50,7 @@ android {
         applicationId "com.example.food_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 21
+        minSdkVersion 29
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

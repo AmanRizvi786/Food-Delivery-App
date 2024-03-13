@@ -115,7 +115,7 @@ class _PaymentWalletState extends State<PaymentWallet> {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   padding: EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(color: Color(0xFF008080),borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(color: Color(0xFF000000),borderRadius: BorderRadius.circular(10)),
                   width: MediaQuery.of(context).size.width,
                   child: Text("Add Money",style: AppWidget.WhiteSemiboldTextStyle(),textAlign:TextAlign.center),
                 )

@@ -87,7 +87,7 @@ class _AdminLoginState extends State<AdminLogin> {
                                   },
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    hintText: "Password",
+                                    hintText: "Admin Name",
                                     hintStyle: TextStyle(
                                         color:
                                             Color.fromARGB(255, 160, 160, 147)),

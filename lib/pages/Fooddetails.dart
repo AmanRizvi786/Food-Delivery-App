@@ -1,10 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:food_app/services/database.dart';
 import 'package:food_app/widgets/widget_support.dart';
 
+import '../services/sharedPreference.dart';
+
 class FoodDetails extends StatefulWidget {
-  const FoodDetails({super.key});
+  //const FoodDetails({super.key});
+
+  String foodImage,foodName,foodDetails,foodPrice;
+  FoodDetails({required this.foodImage,required this.foodName,required this.foodDetails,required this.foodPrice});
 
   @override
   State<FoodDetails> createState() => _FoodDetailsState();
@@ -12,6 +18,27 @@ class FoodDetails extends StatefulWidget {
 
 class _FoodDetailsState extends State<FoodDetails> {
   int itemCount=1;
+  int total=0;
+  String? id;
+
+  getthesharedpref() async {
+    id = await SharedPreferenceHelper().getUserId();
+    setState(() {});
+  }
+
+  ontheload() async {
+    await getthesharedpref();
+    setState(() {});
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    ontheload();
+    total=int.parse(widget.foodPrice);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +54,13 @@ class _FoodDetailsState extends State<FoodDetails> {
               },
                 child: Icon(Icons.arrow_back_ios_new_outlined,color: Colors.black)
             ),
-            Image.asset("images/salad2.png",
-                height: MediaQuery.of(context).size.height/2.5,
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.fill
+            Padding(
+              padding: const EdgeInsets.only(top: 30,bottom: 30),
+              child: Image.network(widget.foodImage,
+                  height: MediaQuery.of(context).size.height/2.5,
+                  width: MediaQuery.of(context).size.width,
+                  fit: BoxFit.fill
+              ),
             ),
             SizedBox(height: 15),
 
@@ -40,8 +70,8 @@ class _FoodDetailsState extends State<FoodDetails> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Mediterranean",style: AppWidget.SemiboldTextStyle(),),
-                    Text("Chickpea Salad",style: AppWidget.boldTextStyle(),),
+                    // Text("Mediterranean",style: AppWidget.SemiboldTextStyle(),),
+                    Text(widget.foodName,style: AppWidget.boldTextStyle(),),
                   ],
                 ),
 
@@ -51,10 +81,9 @@ class _FoodDetailsState extends State<FoodDetails> {
                   onTap: (){
                     if(itemCount>1){
                       --itemCount;
+                      total=total-int.parse(widget.foodPrice);
                     }
-                    setState(() {
-
-                    });
+                    setState(() {});
                   },
                   child: Container(
                     decoration: BoxDecoration(color: Colors.black,borderRadius: BorderRadius.circular(7)),
@@ -67,9 +96,8 @@ class _FoodDetailsState extends State<FoodDetails> {
                 GestureDetector(
                   onTap: (){
                     ++itemCount;
-                    setState(() {
-
-                    });
+                    total=total+int.parse(widget.foodPrice);
+                    setState(() {});
                   },
                   child: Container(
                     decoration: BoxDecoration(color: Colors.black,borderRadius: BorderRadius.circular(7)),
@@ -79,7 +107,7 @@ class _FoodDetailsState extends State<FoodDetails> {
               ],
             ),
             SizedBox(height: 20,),
-            Text("Introducing our vibrant Garden Harvest Salad, a tantalizing medley of crisp greens, ripe cherry tomatoes, crunchy cucumbers, and velvety avocado slices, all artfully tossed with our signature herb-infused vinaigrette. ",
+            Text(widget.foodDetails,
               style: AppWidget.LightTextStyle(),maxLines: 3,),
             SizedBox(height: 25,),
             Row(children: [
@@ -99,24 +127,41 @@ class _FoodDetailsState extends State<FoodDetails> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                     Text("Total Price",style: AppWidget.SemiboldTextStyle(),),
-                    Text("\$28",style: AppWidget.boldTextStyle(),),
+                    Text("\$"+total.toString(),style: AppWidget.boldTextStyle(),),
                   ],),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width/2,
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(color: Colors.black,borderRadius: BorderRadius.circular(10)),
-                    child: Row(
-                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text("Add to cart",style: TextStyle(color: Colors.white,fontFamily: "Poppins",fontSize: 16),),
-                        SizedBox(width:30),
-                        Container(
-                                decoration: BoxDecoration(color: Colors.grey[800],borderRadius: BorderRadius.circular(10)),
-                                child: Icon(Icons.shopping_cart_outlined,color: Colors.white,)),
-                      ],
+                GestureDetector(
+                  onTap: () async{
+                    Map<String,dynamic> addFoodToCart={
+                      "Name":widget.foodName,
+                      "Quantity":itemCount.toString(),
+                      "Total":total.toString(),
+                      "Image":widget.foodImage
+                    };
+                    await DatabaseMethods().addFoodToCart(addFoodToCart, id!);
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.redAccent,
+                        content: Text(
+                          "Food Added to Cart",
+                          style: TextStyle(fontSize: 16.0),
+                        )));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width/2,
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(color: Colors.black,borderRadius: BorderRadius.circular(10)),
+                      child: Row(
+                         mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text("Add to cart",style: TextStyle(color: Colors.white,fontFamily: "Poppins",fontSize: 16),),
+                          SizedBox(width:30),
+                          Container(
+                                  decoration: BoxDecoration(color: Colors.grey[800],borderRadius: BorderRadius.circular(10)),
+                                  child: Icon(Icons.shopping_cart_outlined,color: Colors.white,)),
+                        ],
+                      ),
                     ),
                   ),
                 )
